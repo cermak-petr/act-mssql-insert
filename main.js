@@ -37,13 +37,6 @@ function createInsert(results, start, length, table, staticParam){
             if(result[key]){
                 if(typeof result[key] === 'number'){val = result[key];}
                 else{val = "'" + result[key].replace(/'/g, "''") + "'";}
-                /*if(isString(result[key])){
-                    if(result[key].trim().match(/^(\d+\.)?(\d+)$/)){
-                        val = result[key].trim();
-                    }
-                    else{val = "'" + result[key] + "'";}
-                }
-                else{val = result[key];}*/
             }
             else{val = 'NULL';}
             valueStrings += index > 0 ? (', ' + val) : val;
