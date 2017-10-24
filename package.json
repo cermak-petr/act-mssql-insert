@@ -1,0 +1,17 @@
+{ 
+  "name": "mssql-insert",
+  "version": "1.0.0",
+  "description": "Apify act for inserting crawler results into a remote MSSQL table",
+  "main": "main.js",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cermak-petr/act-mssql-insert"
+  },
+  "dependencies": { 
+    "mssql": "latest",
+    "apify": "latest",
+    "bluebird": "latest",
+    "underscore": "latest"
+  }
+}
