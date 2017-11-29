@@ -9,9 +9,9 @@
     "url": "https://github.com/cermak-petr/act-mssql-insert"
   },
   "dependencies": { 
-    "mssql": "latest",
-    "apify": "latest",
-    "bluebird": "latest",
-    "underscore": "latest"
+    "mssql": "^4.1.0",
+    "apify": "^0.4.37",
+    "bluebird": "^3.5.1",
+    "underscore": "^1.8.3"
   }
 }
