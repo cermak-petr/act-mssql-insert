@@ -5,8 +5,8 @@ Apify act for inserting crawler results into a remote MSSQL table.
 This act fetches all results from a specified Apifier crawler execution and inserts them into
 a table in a remote MSSQL database.
 
-The act does not store its state, i.e. if it crashes it restarts fetching all URLs.
-Therefore you should only use it for short lists of URLs.
+The act does not store its state, i.e. if it crashes it restarts fetching all the results.
+Therefore you should only use it for executions with low number of results.
 
 
 **INPUT**
