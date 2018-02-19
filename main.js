@@ -76,7 +76,7 @@ Apify.main(async () => {
     Apify.client.setOptions({executionId: input._id});
     
     async function processResults(pool, lastResults){
-        const results = _.chain(lastResults.items).pluck('pageFunctionResult').flatten().value();
+        const results = _.chain(fullResults.items).flatten().value();
         for(let i = 0; i < results.length; i += rowSplit){
             const insert = createInsert(results, i, rowSplit, data.table, data.staticParam);
             try{
@@ -93,7 +93,12 @@ Apify.main(async () => {
         const limit = 15000;
         let total = -1, offset = 0;
         while(total === -1 || offset + limit <= total){
-            const lastResults = await Apify.client.crawlers.getExecutionResults({limit: limit, offset: offset});
+            const lastResults = await Apify.client.crawlers.getExecutionResults({
+                limit: limit, 
+                offset: offset,
+                simplified: 1,
+                hideUrl: data.addUrl ? 0 : 1
+            });
             await processResults(pool, lastResults);
             total = lastResults.total;
             offset += limit;
