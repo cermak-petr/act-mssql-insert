@@ -75,7 +75,7 @@ Apify.main(async () => {
     
     Apify.client.setOptions({executionId: input._id});
     
-    async function processResults(pool, lastResults){
+    async function processResults(pool, fullResults){
         const results = _.chain(fullResults.items).flatten().value();
         for(let i = 0; i < results.length; i += rowSplit){
             const insert = createInsert(results, i, rowSplit, data.table, data.staticParam);
