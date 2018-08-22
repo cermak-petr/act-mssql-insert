@@ -83,7 +83,10 @@ Apify.main(async () => {
                 const records = await pool.request().query(insert);
                 console.dir(records);
             }
-            catch(e){console.log(e);}
+            catch(e){
+                console.log('Error in insert: ' + insert);
+                console.log(e);
+            }
         }
     }
     
