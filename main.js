@@ -22,6 +22,21 @@ function getAllKeys(results, start, length){
     return Object.keys(keys);
 }
 
+const loadItems = async (datasetId, process, offset) => {  
+    const limit = 100;
+    if(!offset){offset = 0;}
+    console.log('starting to load from dataset');
+    const newItems = await Apify.client.datasets.getItems({
+        datasetId, 
+        offset,
+        limit
+    });
+    if(newItems && newItems.items && newItems.items.length > 0){
+        await process(newItems.items);
+        await loadItems(datasetId, process, offset + limit);
+    }
+};
+
 function createInsert(results, start, length, table, staticParam){
     
     const keys = getAllKeys(results, start, length);
@@ -62,8 +77,8 @@ Apify.main(async () => {
     if(!input.data){
         return console.log('missing "data" attribute in INPUT');
     }
-    if(!input._id && !input.rows){
-        return console.log('missing "_id" or "rows" attribute in INPUT');
+    if(!input._id && !input.rows && !input.datasetId){
+        return console.log('missing "_id", "datasetId" or "rows" attribute in INPUT');
     }
     const data = input.data ? (typeof input.data === 'string' ? JSON.parse(input.data) : input.data) : {};
     if(!data.connection){
@@ -92,20 +107,28 @@ Apify.main(async () => {
     try{
         const pool = await sql.connect(data.connection);
         
-        const limit = 15000;
-        let total = -1, offset = 0;
-        while(total === -1 || offset + limit <= total){
-            const lastResults = await Apify.client.crawlers.getExecutionResults({
-                limit: limit, 
-                offset: offset,
-                simplified: 1,
-                hideUrl: data.addUrl ? 0 : 1
-            });
-            const results = _.chain(fullResults.items).flatten().value();
-            await processResults(pool, results);
-            total = lastResults.total;
-            offset += limit;
+        if(input._id){
+            const limit = 15000;
+            let total = -1, offset = 0;
+            while(total === -1 || offset + limit <= total){
+                const lastResults = await Apify.client.crawlers.getExecutionResults({
+                    limit: limit, 
+                    offset: offset,
+                    simplified: 1,
+                    hideUrl: data.addUrl ? 0 : 1
+                });
+                const results = _.chain(fullResults.items).flatten().value();
+                await processResults(pool, results);
+                total = lastResults.total;
+                offset += limit;
+            }
         }
+        else if(input.datasetId){
+            await loadItems(input.datasetId, async(results) => {
+                await processResults(pool, results);
+            });
+        }
+        else{await processResults(poolQuery, input.rows);}
     }
     catch(e){console.log(e);}
 });
