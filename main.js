@@ -62,8 +62,8 @@ Apify.main(async () => {
     if(!input.data){
         return console.log('missing "data" attribute in INPUT');
     }
-    if(!input._id){
-        return console.log('missing "_id" attribute in INPUT');
+    if(!input._id && !input.rows){
+        return console.log('missing "_id" or "rows" attribute in INPUT');
     }
     const data = input.data ? (typeof input.data === 'string' ? JSON.parse(input.data) : input.data) : {};
     if(!data.connection){
@@ -75,8 +75,7 @@ Apify.main(async () => {
     
     Apify.client.setOptions({executionId: input._id});
     
-    async function processResults(pool, fullResults){
-        const results = _.chain(fullResults.items).flatten().value();
+    async function processResults(pool, results){
         for(let i = 0; i < results.length; i += rowSplit){
             const insert = createInsert(results, i, rowSplit, data.table, data.staticParam);
             try{
@@ -102,7 +101,8 @@ Apify.main(async () => {
                 simplified: 1,
                 hideUrl: data.addUrl ? 0 : 1
             });
-            await processResults(pool, lastResults);
+            const results = _.chain(fullResults.items).flatten().value();
+            await processResults(pool, results);
             total = lastResults.total;
             offset += limit;
         }
