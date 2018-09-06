@@ -32,7 +32,7 @@ Additionally to crawler results, it is also possible to specify a dataset id, to
     // id of dataset to fetch rows from
     "datasetId": "dataset_id",
 
-    // MySQL connection credentials
+    // MSSQL connection credentials
     "data": "connection_credentials"
 }
 ```
